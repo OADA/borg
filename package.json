@@ -1,0 +1,57 @@
+{
+  "name": "@oada/borg",
+  "version": "1.0.0",
+  "description": "Assimilate data into OADA",
+  "main": "dist/index.js",
+  "author": "Alex Layton <alex@layton.in>",
+  "license": "MIT",
+  "bin": {
+    "oada-borg": "dist/index.js"
+  },
+  "scripts": {
+    "start": "node -r esm-wallaby --enable-source-maps dist/index.js",
+    "build": "tsc -b",
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    }
+  },
+  "devDependencies": {
+    "@tsconfig/node16": "^1.0.1",
+    "@types/convict": "^6.1.1",
+    "@types/csv-parse": "^1.2.2",
+    "@types/jest": "^26.0.24",
+    "@types/latlon-geohash": "^2.0.0",
+    "@types/node": "^16.3.2",
+    "@types/prettier": "^2.3.2",
+    "@types/string-similarity": "^4.0.0",
+    "@types/uuid": "^8.3.1",
+    "@yarnpkg/pnpify": "^3.0.0-rc.10",
+    "jest": "^27.0.6",
+    "prettier": "^2.3.2",
+    "ts-jest": "^27.0.3",
+    "type-fest": "^1.2.2",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "@oada/client": "^2.4.6",
+    "convict": "^6.2.0",
+    "csv-parse": "^4.16.0",
+    "dotenv": "^10.0.0",
+    "esm-wallaby": "^3.2.25",
+    "fast-json-stable-stringify": "^2.1.0",
+    "gps-time": "^1.0.8",
+    "guess-file-type": "^1.0.1",
+    "handlebars": "^4.7.7",
+    "ksuid": "^2.0.0",
+    "latlon-geohash": "^2.0.0",
+    "moment": "^2.29.1",
+    "node-stream-zip": "^1.13.6",
+    "readable-stream-clone": "^0.0.7",
+    "string-similarity": "^4.0.4",
+    "tslib": "^2.3.0",
+    "uuid": "^8.3.2"
+  }
+}
