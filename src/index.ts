@@ -6,6 +6,8 @@ import Handlebars from 'handlebars';
 import stringify from 'fast-json-stable-stringify';
 import { v5 as uuid } from 'uuid';
 import KSUID from 'ksuid';
+import fg from 'fast-glob';
+import debug from 'debug';
 
 import { connect } from '@oada/client';
 
@@ -13,6 +15,10 @@ import csv from './csv';
 import zip from './zip';
 import { guessYear, timeNormalizer } from './time';
 import config from './config';
+
+const fatal = debug('oada:borg:fatal');
+const error = debug('oada:borg:error');
+const info = debug('oada:borg:info');
 
 const files = config.get('input.files');
 const path = Handlebars.compile(config.get('output.path'));
@@ -57,7 +63,7 @@ export async function* open(
         throw new Error(`Unsupported file type ${type}`);
     }
   } catch (err) {
-    console.error(`Error reading ${filename}: ${err}`);
+    error(`Error reading ${filename}: ${err}`);
   }
 }
 
@@ -95,8 +101,9 @@ async function handleFiles(filenames: readonly string[]) {
 
   //conn.put({ path, data: {} });
 
-  for (const filename of filenames) {
-    const files = open(filename);
+  const stream = fg.stream([...filenames]);
+  for await (const filename of stream) {
+    const files = open(filename as string);
     for await (const file of files) {
       const fileuuid = uuid(stringify(file.info), ns);
       try {
@@ -135,9 +142,9 @@ async function handleFiles(filenames: readonly string[]) {
             } as any,
           });
         }
-        console.log('Finished importing file: %O', file.info);
+        info('Finished importing file: %O', file.info);
       } catch (err) {
-        console.error('Error importing file: %O %O', file.info, err);
+        error('Error importing file: %O %O', file.info, err);
       }
     }
   }
@@ -147,6 +154,6 @@ async function handleFiles(filenames: readonly string[]) {
 }
 
 handleFiles(files).catch((err) => {
-  console.error(err);
+  fatal(err);
   process.exit(1);
 });

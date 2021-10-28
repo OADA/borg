@@ -5,9 +5,12 @@ import readline from 'readline';
 import parse from 'csv-parse';
 import ReadableStreamClone from 'readable-stream-clone';
 import { findBestMatch } from 'string-similarity';
+import debug from 'debug';
 
 import type { InputFile } from '.';
 import config from './config';
+
+const warn = debug('oada:borg:warn');
 
 const { delimiter } = config.get('input');
 
@@ -57,7 +60,7 @@ export function parseHeader(
   for (const [target, cols] of Object.entries(rmap)) {
     if (cols.length > 1) {
       // TODO: Find alternate assignments?
-      throw new Error(`Multiple columns matched field ${target}: ${cols}`);
+      warn('Multiple columns matched field %s: %o', target, cols);
     }
   }
 

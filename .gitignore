@@ -1,6 +1,7 @@
 node_modules
 package.lock
 
+.nvimlog
 *.log
 .DS_Store
 
