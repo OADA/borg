@@ -7,8 +7,8 @@ import ReadableStreamClone from 'readable-stream-clone';
 import { findBestMatch } from 'string-similarity';
 import debug from 'debug';
 
-import type { InputFile } from '.';
-import config from './config';
+import type { InputFile } from './index.js';
+import config from './config.js';
 
 const warn = debug('oada:borg:warn');
 

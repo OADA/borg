@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { toUnixMS } from 'gps-time';
 
-import config from './config';
+import config from './config.js';
 
 const years = config.get('input.years');
 

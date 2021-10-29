@@ -11,10 +11,10 @@ import debug from 'debug';
 
 import { connect } from '@oada/client';
 
-import csv from './csv';
-import zip from './zip';
-import { guessYear, timeNormalizer } from './time';
-import config from './config';
+import csv from './csv.js';
+import zip from './zip.js';
+import { guessYear, timeNormalizer } from './time.js';
+import config from './config.js';
 
 const fatal = debug('oada:borg:fatal');
 const error = debug('oada:borg:error');
@@ -77,22 +77,21 @@ interface GPSDatum<T extends string | number | Date = string | number | Date> {
 }
 
 // TODO: Where to have these?
-Handlebars.registerHelper('geohash', function geohash(length?: number) {
-  // @ts-ignore
-  return Geohash.encode(+this.lat, +this.lon, length);
-});
-Handlebars.registerHelper('uuid', function () {
-  // @ts-ignore
+Handlebars.registerHelper(
+  'geohash',
+  function geohash(this: GPSDatum, length?: number) {
+    return Geohash.encode(+this.lat, +this.lon, length);
+  }
+);
+Handlebars.registerHelper('uuid', function (this: { fileuuid: string }) {
   const { fileuuid, ...rest } = this;
   return uuid(stringify(rest), fileuuid);
 });
-Handlebars.registerHelper('ksuid', function () {
-  // @ts-ignore
+Handlebars.registerHelper('ksuid', function (this:{time: number, fileuuid: string}) {
   const { fileuuid, ...rest } = this;
-  const thisuuid = Buffer.alloc(16);
-  uuid(stringify(rest), fileuuid, thisuuid);
-  // @ts-ignore
-  return KSUID.fromParts(this.time, thisuuid).string;
+  const thisUuid = Buffer.alloc(16);
+  uuid(stringify(rest), fileuuid, thisUuid);
+  return KSUID.fromParts(this.time, thisUuid).string;
 });
 
 async function handleFiles(filenames: readonly string[]) {

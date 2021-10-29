@@ -725,7 +725,6 @@ __metadata:
     csv-parse: ^4.16.3
     debug: ^4.3.2
     dotenv: ^10.0.0
-    esm-wallaby: ^3.2.25
     fast-glob: ^3.2.7
     fast-json-stable-stringify: ^2.1.0
     gps-time: ^1.0.8
@@ -2303,13 +2302,6 @@ __metadata:
     escodegen: bin/escodegen.js
     esgenerate: bin/esgenerate.js
   checksum: 5aa6b2966fafe0545e4e77936300cc94ad57cfe4dc4ebff9950492eaba83eef634503f12d7e3cbd644ecc1bab388ad0e92b06fd32222c9281a75d1cf02ec6cef
-  languageName: node
-  linkType: hard
-
-"esm-wallaby@npm:^3.2.25":
-  version: 3.2.25
-  resolution: "esm-wallaby@npm:3.2.25"
-  checksum: 7cdf39100164510183fe7c6ed3e8282df039f8af479c087a44f9a5142c9b20f18c3ea98941389cedfdff233bc565c16adad72839e3c5ea750f06419d0a419162
   languageName: node
   linkType: hard
 

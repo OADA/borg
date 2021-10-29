@@ -10,7 +10,7 @@
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["node", "-r", "esm-wallaby"],
+      "runtimeArgs": ["node"],
       "program": "${workspaceFolder}/src/index.ts",
       "env": {
         "DEBUG": "*",

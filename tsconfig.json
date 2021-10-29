@@ -1,6 +1,8 @@
 {
   "extends": "@tsconfig/node16",
   "compilerOptions": {
+    "module": "ES2020",
+    "moduleResolution": "Node",
     "removeComments": true,
     "importHelpers": true,
     "strict": true,

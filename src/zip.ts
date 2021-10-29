@@ -2,7 +2,7 @@ import type { Readable } from 'stream';
 
 import StreamZip from 'node-stream-zip';
 
-import { InputFile, open } from '.';
+import { InputFile, open } from './index.js';
 
 export default async function* generate(
   file: string,
