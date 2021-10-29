@@ -41,6 +41,7 @@ parserOptions:
   project: './tsconfig.eslint.json'
 
 rules:
+  spaced-comment: [error, always, markers: [/, //]]
   filenames/match-regex: off
   unicorn/filename-case: off
   i18n-text/no-en: off
@@ -53,11 +54,7 @@ rules:
   unicorn/prefer-spread: off
   no-constructor-bind/no-constructor-bind: error
   no-constructor-bind/no-constructor-state: error
-  sort-imports:
-    [
-      warn,
-      {allowSeparatedGroups: true}
-    ]
+  sort-imports: [warn, { allowSeparatedGroups: true }]
   '@typescript-eslint/restrict-template-expressions': off
   '@typescript-eslint/no-shadow': warn
   '@typescript-eslint/naming-convention':

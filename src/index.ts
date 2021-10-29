@@ -37,7 +37,7 @@ const tree = config.get('output.tree');
 // UUID v5 namespace
 const ns = '72d0637d-2fab-4e6a-b195-c28b5f4aabcb';
 
-// TODO: How to handle this?
+// ? How to handle this?
 const gpsColumns = [
   { name: 'gps time', key: 'time' },
   'lat',
@@ -53,7 +53,7 @@ export interface InputFile<Datum = Record<string, unknown>> {
   data: AsyncIterable<Datum>;
 }
 
-// TODO: Where should this logic go...
+// ? Where should this logic go...
 export async function* open(
   filename: string,
   stream?: Readable
@@ -85,7 +85,7 @@ interface GpsDatum<T extends string | number | Date = string | number | Date> {
   time: T;
 }
 
-// TODO: Where to have these?
+// ? Where to have these?
 Handlebars.registerHelper(
   'geohash',
   function (this: GpsDatum, length?: number) {
@@ -106,9 +106,6 @@ Handlebars.registerHelper(
   }
 );
 
-/**
- * @param filenames
- */
 async function handleFiles(filenames: readonly string[]) {
   const { domain, token } = config.get('oada');
   const conn = await connect({ domain, token });
@@ -130,7 +127,7 @@ async function handleFiles(filenames: readonly string[]) {
         });
         const _id = loc!.substring(1);
         */
-        // await conn.post({ path, data: { _id } });
+        //// await conn.post({ path, data: { _id } });
         let nt: undefined | ((time: string | number | Date) => number);
         const year = guessYear(file.info);
         for await (const datum of file.data as unknown as AsyncIterable<GpsDatum>) {
@@ -165,7 +162,9 @@ async function handleFiles(filenames: readonly string[]) {
   }
 }
 
+// ? Keep node alive??
+setInterval(() => 0, 1000);
+
 await handleFiles(files);
 
-// TODO: Find what is not being closed or something
 process.exit();
