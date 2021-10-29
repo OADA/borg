@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2021 Open Ag Data Alliance
+ * 
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ */
+
 import { timeNormalizer } from './time';
 
 test('normalize time from y/m/d time ', () => {

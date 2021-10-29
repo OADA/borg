@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2021 Open Ag Data Alliance
+ * 
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ */
+
 declare module 'guess-file-type' {
   export type MimeType = `${string}/${string}`;
 

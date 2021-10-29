@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2021 Open Ag Data Alliance
+ * 
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ */
+
 import type { Readable } from 'stream';
 
 import StreamZip from 'node-stream-zip';

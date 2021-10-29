@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2021 Open Ag Data Alliance
+ * 
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ */
+
 /* Copyright 2021 OADA
  *
  * Licensed under the Apache License, Version 2.0 (the 'License');
