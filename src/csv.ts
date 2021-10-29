@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2021 Open Ag Data Alliance
- * 
+ *
  * This software is released under the MIT License.
  * https://opensource.org/licenses/MIT
  */
 
-import { createReadStream } from 'fs';
-import type { Readable } from 'stream';
-import readline from 'readline';
+import { createReadStream } from 'node:fs';
+import type { Readable } from 'node:stream';
+import readline from 'node:readline';
 
 import parse from 'csv-parse';
 import ReadableStreamClone from 'readable-stream-clone';
@@ -50,21 +50,21 @@ export function parseHeader(
   );
 
   const colnames = header.split(delimiter).map((r) => r.trim());
-  /** map cols to colnames */
+  /** Map cols to colnames */
   const map: Record<string, string> = {};
-  /** reverse map colnames to cols */
-  const rmap: Record<string, string[]> = {};
+  /** Reverse map colnames to cols */
+  const rMap: Record<string, string[]> = {};
   // Find most likely match for each column
   for (const col of cols) {
     const {
       bestMatch: { target },
     } = findBestMatch(col.name, colnames);
     map[col.key] = target;
-    rmap[target] = [...(rmap[target] ?? []), col.key];
+    rMap[target] = [...(rMap[target] ?? []), col.key];
   }
 
   // Check for duplicate assignments
-  for (const [target, cols] of Object.entries(rmap)) {
+  for (const [target, cols] of Object.entries(rMap)) {
     if (cols.length > 1) {
       // TODO: Find alternate assignments?
       warn('Multiple columns matched field %s: %o', target, cols);
@@ -91,6 +91,7 @@ export function parseHeader(
  * Try to figure out the header line?
  *
  * @param filename Name of file to search for a header
+ * @param input
  */
 export async function guessHeader(input: Readable) {
   const { comment } = config.get('input');
@@ -104,11 +105,12 @@ export async function guessHeader(input: Readable) {
       // Look for comment at top of file
       if (comment.some((comment) => line.startsWith(comment))) {
         // Remove comment character(s) from line?
-        const len = comment
+        const length = comment
           .filter((comment) => line.startsWith(comment))
           .map(({ length }) => length)
+          // eslint-disable-next-line unicorn/no-array-reduce
           .reduce((a, b) => (b > a ? b : a));
-        const text = line.substring(len);
+        const text = line.slice(Math.max(0, length));
 
         // Assume header is last line of top comment block?
         topcomment = topcomment ? `${topcomment}\n${header!}` : header!;
@@ -127,6 +129,7 @@ export async function guessHeader(input: Readable) {
     }
 
     if (!header!) {
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
       throw new Error(`Could not find header for file ${input}`);
     }
 
@@ -143,6 +146,8 @@ export async function guessHeader(input: Readable) {
 /**
  * @param cols The columns to look for (e.g., GPS keys)
  * @param file The filename of a CSV file
+ * @param filename
+ * @param stream
  */
 export default async function* generate(
   cols: readonly Column[],
@@ -180,6 +185,7 @@ export default async function* generate(
     /**
      * Return object representation of one row at a time
      */
+    // eslint-disable-next-line no-inner-declarations
     async function* data() {
       const parser = fork1.pipe(
         parse({
@@ -187,7 +193,9 @@ export default async function* generate(
           trim: true,
           // TODO: Handle comments besides just top comment?
           comment: '',
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           skip_lines_with_error: true,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           from_line: startline + 1,
           columns,
         })
@@ -199,8 +207,8 @@ export default async function* generate(
       info,
       data: data(),
     };
-  } catch (err) {
-    throw new Error(`Error reading csv file ${filename}: ${err}`);
+  } catch (error: unknown) {
+    throw new Error(`Error reading csv file ${filename}: ${error}`);
   } finally {
     fork1.unpipe();
     fork2.unpipe();

@@ -1,12 +1,12 @@
 // Copyright (c) 2021 Open Ag Data Alliance
-// 
+//
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
 {
   "extends": "@tsconfig/node16",
   "compilerOptions": {
-    "module": "ES2020",
+    "module": "esnext",
     "moduleResolution": "Node",
     "removeComments": true,
     "importHelpers": true,

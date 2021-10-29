@@ -1,29 +1,32 @@
 /**
  * Copyright (c) 2021 Open Ag Data Alliance
- * 
+ *
  * This software is released under the MIT License.
  * https://opensource.org/licenses/MIT
  */
 
-import type { Readable } from 'stream';
+/* eslint-disable unicorn/no-process-exit */
+/* eslint-disable no-process-exit */
 
-import { guess } from 'guess-file-type';
+import type { Readable } from 'node:stream';
+
 import Geohash from 'latlon-geohash';
 import Handlebars from 'handlebars';
-import stringify from 'fast-json-stable-stringify';
-import { v5 as uuid } from 'uuid';
 import KSUID from 'ksuid';
-import fg from 'fast-glob';
 import debug from 'debug';
+import fg from 'fast-glob';
+import stringify from 'fast-json-stable-stringify';
+import { guess } from 'guess-file-type';
+import { v5 as uuid } from 'uuid';
 
+import type { Body } from '@oada/client/dist/client';
 import { connect } from '@oada/client';
 
-import csv from './csv.js';
-import zip from './zip.js';
 import { guessYear, timeNormalizer } from './time.js';
 import config from './config.js';
+import csv from './csv.js';
+import zip from './zip.js';
 
-const fatal = debug('oada:borg:fatal');
 const error = debug('oada:borg:error');
 const info = debug('oada:borg:info');
 
@@ -45,12 +48,16 @@ const gpsColumns = [
   'accuracy',
 ];
 
-export interface InputFile<Datum = {}> {
-  info: {};
+export interface InputFile<Datum = Record<string, unknown>> {
+  info: { filename: string; topcomment?: string } & Record<string, unknown>;
   data: AsyncIterable<Datum>;
 }
 
 // TODO: Where should this logic go...
+/**
+ * @param filename
+ * @param stream
+ */
 export async function* open(
   filename: string,
   stream?: Readable
@@ -58,8 +65,7 @@ export async function* open(
   try {
     const type = await guess(filename);
     switch (type) {
-      case 'text/plain':
-      // Assume plain text is csv?
+      case 'text/plain': // Assume plain text is csv?
       case 'text/csv':
         yield* csv(gpsColumns, filename, stream);
         break;
@@ -69,12 +75,12 @@ export async function* open(
       default:
         throw new Error(`Unsupported file type ${type}`);
     }
-  } catch (err) {
-    error(`Error reading ${filename}: ${err}`);
+  } catch (error_: unknown) {
+    error(error_, `Error reading ${filename}`);
   }
 }
 
-interface GPSDatum<T extends string | number | Date = string | number | Date> {
+interface GpsDatum<T extends string | number | Date = string | number | Date> {
   lat: string;
   lon: string;
   alt: string;
@@ -86,35 +92,41 @@ interface GPSDatum<T extends string | number | Date = string | number | Date> {
 // TODO: Where to have these?
 Handlebars.registerHelper(
   'geohash',
-  function geohash(this: GPSDatum, length?: number) {
-    return Geohash.encode(+this.lat, +this.lon, length);
+  function (this: GpsDatum, length?: number) {
+    return Geohash.encode(Number(this.lat), Number(this.lon), length);
   }
 );
 Handlebars.registerHelper('uuid', function (this: { fileuuid: string }) {
   const { fileuuid, ...rest } = this;
   return uuid(stringify(rest), fileuuid);
 });
-Handlebars.registerHelper('ksuid', function (this:{time: number, fileuuid: string}) {
-  const { fileuuid, ...rest } = this;
-  const thisUuid = Buffer.alloc(16);
-  uuid(stringify(rest), fileuuid, thisUuid);
-  return KSUID.fromParts(this.time, thisUuid).string;
-});
+Handlebars.registerHelper(
+  'ksuid',
+  function (this: { time: number; fileuuid: string }) {
+    const { fileuuid, ...rest } = this;
+    const thisUuid = Buffer.alloc(16);
+    uuid(stringify(rest), fileuuid, thisUuid);
+    return KSUID.fromParts(this.time, thisUuid).string;
+  }
+);
 
+/**
+ * @param filenames
+ */
 async function handleFiles(filenames: readonly string[]) {
   const { domain, token } = config.get('oada');
   const conn = await connect({ domain, token });
 
-  //conn.put({ path, data: {} });
+  // Conn.put({ path, data: {} });
 
-  const stream = fg.stream([...filenames]);
+  const stream = fg.stream(Array.from(filenames));
   for await (const filename of stream) {
-    const files = open(filename as string);
-    for await (const file of files) {
+    const ffiles = open(filename as string);
+    for await (const file of ffiles) {
       const fileuuid = uuid(stringify(file.info), ns);
       try {
         /*
-        const {
+        Const {
           headers: { 'content-location': loc },
         } = await conn.post({
           path: '/resources',
@@ -122,14 +134,13 @@ async function handleFiles(filenames: readonly string[]) {
         });
         const _id = loc!.substring(1);
         */
-        //await conn.post({ path, data: { _id } });
+        // await conn.post({ path, data: { _id } });
         let nt: undefined | ((time: string | number | Date) => number);
-        // @ts-ignore
         const year = guessYear(file.info);
-        for await (const datum of file.data as AsyncIterable<GPSDatum>) {
+        for await (const datum of file.data as unknown as AsyncIterable<GpsDatum>) {
           nt = nt ?? timeNormalizer(datum.time, year);
           const time = nt(datum.time);
-          const ctx = {
+          const context = {
             ...datum,
             time,
             year,
@@ -138,28 +149,27 @@ async function handleFiles(filenames: readonly string[]) {
 
           await conn.put({
             tree,
-            path: path(ctx),
-            //contentType: 'application/json',
+            path: path(context),
+            // ContentType: 'application/json',
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             data: {
               ...datum,
               time,
               // TODO: What to call this??
               rawtime: datum.time,
-            } as any,
+            } as Body,
           });
         }
+
         info('Finished importing file: %O', file.info);
-      } catch (err) {
-        error('Error importing file: %O %O', file.info, err);
+      } catch (error_: unknown) {
+        error(error_, `Error importing file: ${JSON.stringify(file.info)}`);
       }
     }
   }
-
-  // TODO: Find what is not being closed or something
-  process.exit();
 }
 
-handleFiles(files).catch((err) => {
-  fatal(err);
-  process.exit(1);
-});
+await handleFiles(files);
+
+// TODO: Find what is not being closed or something
+process.exit();

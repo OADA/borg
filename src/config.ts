@@ -1,24 +1,12 @@
 /**
  * Copyright (c) 2021 Open Ag Data Alliance
- * 
+ *
  * This software is released under the MIT License.
  * https://opensource.org/licenses/MIT
  */
 
-/* Copyright 2021 OADA
- *
- * Licensed under the Apache License, Version 2.0 (the 'License');
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an 'AS IS' BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable sonarjs/no-duplicate-string */
 
 import convict from 'convict';
 import { config as load } from 'dotenv';
@@ -56,7 +44,7 @@ const config = convict({
       },
       max: {
         format: Number,
-        default: Infinity,
+        default: Number.POSITIVE_INFINITY,
       },
     },
     delimiter: {
@@ -72,10 +60,11 @@ const config = convict({
     path: {
       format: String,
       default:
-        '/bookmarks/borg/locations/year-index/{{year}}/geohash-index/{{geohash 7}}/data/{{ksuid}}',
+        '/bookmarks/borg/locations/year-index/{{year}}/geohash-index/{{geohash 7}}/data/{{uuid}}',
     },
     tree: {
       format: Object,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       default: {
         bookmarks: {
           _type: 'application/json',
@@ -99,7 +88,7 @@ const config = convict({
             },
           },
         },
-      } as object,
+      } as Record<string, unknown>,
     },
   },
 });
