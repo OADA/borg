@@ -1059,6 +1059,7 @@ __metadata:
     eslint-plugin-jest: ^25.2.2
     eslint-plugin-no-constructor-bind: ^2.0.4
     eslint-plugin-no-only-tests: ^2.6.0
+    eslint-plugin-no-secrets: ^0.8.9
     eslint-plugin-node: ^11.1.0
     eslint-plugin-optimize-regex: ^1.2.1
     eslint-plugin-prettier: ^4.0.0
@@ -3481,6 +3482,15 @@ __metadata:
   version: 2.6.0
   resolution: "eslint-plugin-no-only-tests@npm:2.6.0"
   checksum: 4e3c9cc7e09c13e855fd7af4a8969128f766dcf32a0680715ebcaa903c7fe44db8e45e994c8b908443a6019cbd9ea1b51f413bf968a0c58214aded930a863df9
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-no-secrets@npm:^0.8.9":
+  version: 0.8.9
+  resolution: "eslint-plugin-no-secrets@npm:0.8.9"
+  peerDependencies:
+    eslint: ">=3.0.0"
+  checksum: 28b0ddb37826889a90119e7265468320a18145bd3f357713d74757f5433bc5a4dc48662d8113a30eac5fc05ac3710a65c8280df90dff35ed86313edd07132871
   languageName: node
   linkType: hard
 

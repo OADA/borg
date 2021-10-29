@@ -7,8 +7,8 @@
 
 /* eslint-disable unicorn/prefer-module */
 
-import { resolve } from 'node:path';
 import { createReadStream } from 'node:fs';
+import { resolve } from 'node:path';
 
 import { guessHeader, parseHeader } from './csv';
 

@@ -15,8 +15,8 @@ import Handlebars from 'handlebars';
 import KSUID from 'ksuid';
 import debug from 'debug';
 import fg from 'fast-glob';
-import stringify from 'fast-json-stable-stringify';
 import { guess } from 'guess-file-type';
+import stringify from 'fast-json-stable-stringify';
 import { v5 as uuid } from 'uuid';
 
 import type { Body } from '@oada/client/dist/client';
@@ -54,10 +54,6 @@ export interface InputFile<Datum = Record<string, unknown>> {
 }
 
 // TODO: Where should this logic go...
-/**
- * @param filename
- * @param stream
- */
 export async function* open(
   filename: string,
   stream?: Readable
@@ -121,8 +117,8 @@ async function handleFiles(filenames: readonly string[]) {
 
   const stream = fg.stream(Array.from(filenames));
   for await (const filename of stream) {
-    const ffiles = open(filename as string);
-    for await (const file of ffiles) {
+    const matches = open(filename as string);
+    for await (const file of matches) {
       const fileuuid = uuid(stringify(file.info), ns);
       try {
         /*

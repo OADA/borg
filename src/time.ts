@@ -49,7 +49,7 @@ export function guessYear({
   return undefined;
 }
 
-export type Timeish = string | number | Date;
+export type TimeLike = string | number | Date;
 
 /**
  * Get function to normalize times to Unix time in seconds
@@ -57,7 +57,7 @@ export type Timeish = string | number | Date;
  * @param time Sample time to normalize
  * @param year Year the time is from (if known)
  */
-export function timeNormalizer<Time extends Timeish>(
+export function timeNormalizer<Time extends TimeLike>(
   time: Time,
   year?: number
 ): (time: Time) => number {
@@ -104,16 +104,16 @@ export function timeNormalizer<Time extends Timeish>(
     } catch {}
 
     try {
-      const mgps = moment(toUnixMS(timeNumber));
-      if (isYear(mgps.year())) {
+      const mGps = moment(toUnixMS(timeNumber));
+      if (isYear(mGps.year())) {
         // Times are in gps ms
         return (t) => Number(moment(toUnixMS(Number(t))));
       }
     } catch {}
 
     try {
-      const mgpss = moment(toUnixMS(timeNumber * 1000));
-      if (isYear(mgpss.year())) {
+      const mGpsS = moment(toUnixMS(timeNumber * 1000));
+      if (isYear(mGpsS.year())) {
         // Times are in gps seconds?
         return (t) => Number(moment(toUnixMS(Number(t) * 1000)));
       }

@@ -5,14 +5,14 @@
  * https://opensource.org/licenses/MIT
  */
 
-import { createReadStream } from 'node:fs';
 import type { Readable } from 'node:stream';
+import { createReadStream } from 'node:fs';
 import readline from 'node:readline';
 
-import parse from 'csv-parse';
 import ReadableStreamClone from 'readable-stream-clone';
-import { findBestMatch } from 'string-similarity';
 import debug from 'debug';
+import { findBestMatch } from 'string-similarity';
+import parse from 'csv-parse';
 
 import type { InputFile } from './index.js';
 import config from './config.js';
@@ -60,19 +60,20 @@ export function parseHeader(
       bestMatch: { target },
     } = findBestMatch(col.name, colnames);
     map[col.key] = target;
+    // eslint-disable-next-line security/detect-object-injection
     rMap[target] = [...(rMap[target] ?? []), col.key];
   }
 
   // Check for duplicate assignments
-  for (const [target, cols] of Object.entries(rMap)) {
-    if (cols.length > 1) {
+  for (const [target, c] of Object.entries(rMap)) {
+    if (c.length > 1) {
       // TODO: Find alternate assignments?
-      warn('Multiple columns matched field %s: %o', target, cols);
+      warn('Multiple columns matched field %s: %o', target, c);
     }
   }
 
   // Check for not found columns
-  const missing = cols.filter(({ key }) => !map[key]);
+  const missing = cols.filter(({ key }) => !(key in map));
   if (missing.length > 0) {
     throw new Error(`Failed to find fields ${missing} in header ${header}`);
   }
@@ -80,6 +81,7 @@ export function parseHeader(
   // Remap colnames
   for (const [col, target] of Object.entries(map)) {
     const ind = colnames.indexOf(target);
+    // eslint-disable-next-line security/detect-object-injection
     colnames[ind] = col;
   }
   // TODO: Pretty up "extra" columns?
@@ -103,14 +105,14 @@ export async function guessHeader(input: Readable) {
     let startline = 0;
     for await (const line of lines) {
       // Look for comment at top of file
-      if (comment.some((comment) => line.startsWith(comment))) {
+      if (comment.some((c) => line.startsWith(c))) {
         // Remove comment character(s) from line?
-        const length = comment
-          .filter((comment) => line.startsWith(comment))
+        const commentLength = comment
+          .filter((c) => line.startsWith(c))
           .map(({ length }) => length)
           // eslint-disable-next-line unicorn/no-array-reduce
           .reduce((a, b) => (b > a ? b : a));
-        const text = line.slice(Math.max(0, length));
+        const text = line.slice(Math.max(0, commentLength));
 
         // Assume header is last line of top comment block?
         topcomment = topcomment ? `${topcomment}\n${header!}` : header!;
