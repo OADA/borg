@@ -1,4 +1,5 @@
 /**
+ * @license
  * Copyright (c) 2021 Open Ag Data Alliance
  *
  * This software is released under the MIT License.
@@ -9,10 +10,10 @@ import type { Readable } from 'node:stream';
 import { createReadStream } from 'node:fs';
 import readline from 'node:readline';
 
+import { Options, parse } from 'csv-parse';
 import ReadableStreamClone from 'readable-stream-clone';
 import debug from 'debug';
 import { findBestMatch } from 'string-similarity';
-import parse from 'csv-parse';
 
 import type { InputFile } from './index.js';
 import config from './config.js';
@@ -195,12 +196,12 @@ export default async function* generate(
           trim: true,
           // TODO: Handle comments besides just top comment?
           comment: '',
-          // eslint-disable-next-line @typescript-eslint/naming-convention
+
           skip_lines_with_error: true,
-          // eslint-disable-next-line @typescript-eslint/naming-convention
+
           from_line: startline + 1,
           columns,
-        })
+        } as Options)
       );
       yield* parser;
     }

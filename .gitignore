@@ -1,9 +1,12 @@
 node_modules
 package.lock
 
-.nvimlog
 *.log
 .DS_Store
+.dccache
+tags.*
+.nvimlog
+.history
 
 # TypeScript
 dist

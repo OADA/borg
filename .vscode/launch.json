@@ -10,14 +10,10 @@
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["node"],
-      "program": "${workspaceFolder}/src/index.ts",
-      "env": {
-        "DEBUG": "*",
-        "FILES": "/home/awlayton/corn_hmrf/data/aarons_farm/*/**/*.csv"
-      },
+      "runtimeArgs": ["start"],
       "outputCapture": "std",
-      "preLaunchTask": "npm: build",
+      "program": "${workspaceFolder}/dist/index.js",
+      "preLaunchTask": "${defaultBuildTask}",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     }
   ]

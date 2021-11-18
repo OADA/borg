@@ -1,11 +1,11 @@
 /**
+ * @license
  * Copyright (c) 2021 Open Ag Data Alliance
  *
  * This software is released under the MIT License.
  * https://opensource.org/licenses/MIT
  */
 
-/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable sonarjs/no-duplicate-string */
 
 import convict from 'convict';

@@ -3,20 +3,15 @@ root: true
 extends:
   - plugin:node/recommended
   - plugin:github/recommended
-  - plugin:github/typescript
   - plugin:promise/recommended
   - plugin:regexp/recommended
   - plugin:array-func/recommended
   - plugin:optimize-regex/recommended
   - plugin:import/recommended
-  - plugin:import/typescript
   - plugin:unicorn/recommended
-  - plugin:jest/recommended
-  - plugin:jest/style
   - plugin:security/recommended
   - plugin:sonarjs/recommended
   - xo
-  - xo-typescript
   - prettier
 
 plugins:
@@ -29,10 +24,10 @@ plugins:
   - no-constructor-bind
   - import
   - unicorn
-  - jest
   - security
   - no-secrets
   - sonarjs
+  - notice
 
 parser: '@typescript-eslint/parser'
 
@@ -40,7 +35,62 @@ parserOptions:
   ecmaVersion: 2020
   project: './tsconfig.eslint.json'
 
+overrides:
+  - files: '*.ts'
+    extends:
+      - plugin:github/typescript
+      - plugin:import/typescript
+      - xo-typescript
+      - prettier
+    rules:
+      '@typescript-eslint/naming-convention':
+        [
+          error,
+          { selector: default, format: [camelCase] },
+          { selector: objectLiteralProperty, format: null },
+          { selector: typeProperty, format: null },
+
+          {
+            selector: variableLike,
+            format: [camelCase, UPPER_CASE],
+            leadingUnderscore: allow,
+          },
+          {
+            selector: parameter,
+            format: [camelCase],
+            leadingUnderscore: allow,
+          },
+
+          {
+            selector: memberLike,
+            modifiers: [private],
+            format: [camelCase],
+            leadingUnderscore: require,
+          },
+
+          { selector: typeLike, format: [PascalCase] },
+        ]
+      '@typescript-eslint/restrict-template-expressions': off
+      '@typescript-eslint/no-shadow': warn
+
 rules:
+  notice/notice:
+    - error
+    - template: |
+        /**
+         * @license
+         * Copyright (c) <%= YEAR %> Open Ag Data Alliance
+         *
+         * This software is released under the MIT License.
+         * https://opensource.org/licenses/MIT
+         */
+      onNonMatchingHeader: append
+      nonMatchingTolerance: 0.7
+  sonarjs/no-duplicate-string: [warn, 5]
+  sonarjs/cognitive-complexity: warn
+  eslint-comments/no-unused-disable: off
+  import/extensions: off
+  node/no-unpublished-import: off
   spaced-comment: [error, always, markers: [/, //]]
   filenames/match-regex: off
   unicorn/filename-case: off
@@ -55,22 +105,3 @@ rules:
   no-constructor-bind/no-constructor-bind: error
   no-constructor-bind/no-constructor-state: error
   sort-imports: [warn, { allowSeparatedGroups: true }]
-  '@typescript-eslint/restrict-template-expressions': off
-  '@typescript-eslint/no-shadow': warn
-  '@typescript-eslint/naming-convention':
-    [
-      error,
-      { selector: default, format: [camelCase] },
-
-      { selector: variable, format: [camelCase, UPPER_CASE] },
-      { selector: parameter, format: [camelCase], leadingUnderscore: allow },
-
-      {
-        selector: memberLike,
-        modifiers: [private],
-        format: [camelCase],
-        leadingUnderscore: require,
-      },
-
-      { selector: typeLike, format: [PascalCase] },
-    ]

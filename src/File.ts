@@ -1,4 +1,5 @@
 /**
+ * @license
  * Copyright (c) 2021 Open Ag Data Alliance
  *
  * This software is released under the MIT License.
