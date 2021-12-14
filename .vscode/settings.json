@@ -2,6 +2,7 @@
   "search.exclude": {
     "tags.*": true,
     ".dccache": true,
+    ".nvimlog": true,
     ".history": true,
     "node_modules": true,
     "package.lock": true,
@@ -24,6 +25,7 @@
   "files.exclude": {
     "tags.*": true,
     ".dccache": true,
+    ".nvimlog": true,
     ".history": true,
     "node_modules": true,
     "package.lock": true,
